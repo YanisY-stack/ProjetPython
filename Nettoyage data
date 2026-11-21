@@ -1,0 +1,130 @@
+python -m venv .venv
+source .venv/bin/activate
+python -m pip install pandas
+
+
+from pathlib import Path
+
+import pandas as pd
+
+# ------------------------------------------------------------------------------
+# 0. CHEMINS (relatifs à la racine du projet, pour que ça marche sur GitHub)
+# ------------------------------------------------------------------------------
+RACINE = Path(/workspaces/ProjetPython/Data brutes/DS_DERA_PRIVE_SERIES_LONGUES_data.csv).resolve().parent
+CHEMIN_BRUT = RACINE / "DS_DERA_PRIVE_SERIES_LONGUES_data.csv"
+
+
+# ------------------------------------------------------------------------------
+# 1. DICTIONNAIRES DE RECODAGE (équivalent des "replace ... if ..." de Stata)
+# ------------------------------------------------------------------------------
+RENOMMAGE = {
+    "time_period": "annee",
+    "obs_value": "valeur",
+    "dera_measure": "indicateur",
+    "unit_measure": "unite",
+    "activity": "secteur_activite",
+    "pcs_ese": "categorie_socio_prof",
+    "sex": "sexe",
+    "age": "tranche_age",
+    "number_empl": "taille_entreprise",
+    "wktime": "temps_travail",
+    "quantile": "centile_salaire",
+    "freq": "frequence",
+    "geo_object": "zone_geo",
+}
+
+LABELS_VARIABLES = {
+    "annee": "Année d'observation (1951-2024)",
+    "valeur": "Valeur numérique de la mesure",
+    "indicateur": "Type d'indicateur salarial",
+    "unite": "Unité de mesure (Euros, %, Indice)",
+    "secteur_activite": "Secteur d'activité économique (NAF)",
+    "categorie_socio_prof": "Catégorie socio-professionnelle (PCS)",
+    "sexe": "Genre (Homme, Femme, Total)",
+    "tranche_age": "Tranche d'âge du salarié",
+    "taille_entreprise": "Taille de l'entreprise (Tranche d'effectif)",
+    "temps_travail": "Temps de travail (Temps complet / Total)",
+    "centile_salaire": "Centile/Quantile de distribution des salaires",
+    "frequence": "Fréquence temporelle (A = Annuel)",
+    "zone_geo": "Zone géographique (France)",
+}
+
+MODALITES = {
+    "sexe": {
+        "F": "Femme",
+        "M": "Homme",
+        "_T": "Ensemble",
+    },
+    "categorie_socio_prof": {
+        "3": "Cadres et prof. intellectuelles sup.",
+        "4": "Professions intermédiaires",
+        "5": "Employés",
+        "6": "Ouvriers",
+        "_T": "Ensemble",
+    },
+    "tranche_age": {
+        "Y_LT26": "Moins de 26 ans",
+        "Y26T30": "De 26 à 30 ans",
+        "Y31T40": "De 31 à 40 ans",
+        "Y41T50": "De 41 à 50 ans",
+        "Y51T60": "De 51 à 60 ans",
+        "Y_GT60": "Plus de 60 ans",
+        "_T": "Ensemble",
+    },
+    "taille_entreprise": {
+        "E_LT10": "Moins de 10 salariés",
+        "E10T49": "10 à 49 salariés",
+        "E50T199": "50 à 199 salariés",
+        "E200T499": "200 à 499 salariés",
+        "E500T999": "500 à 999 salariés",
+        "E_GE1000": "1000 salariés et plus",
+        "_T": "Ensemble",
+    },
+    "unite": {
+        "XDC": "Euros constants",
+        "PT": "Pourcentage",
+        "IX": "Indice base 100",
+    },
+    "temps_travail": {
+        "FT": "Temps complet",
+        "_T": "Ensemble",
+    },
+    "secteur_activite": {
+        "H": "Transports et entreposage",
+        "I": "Hébergement et restauration",
+        "J": "Information et communication",
+        "K": "Activités financières et d'assurance",
+        "L": "Activités immobilières",
+        "M_N": "Activités spécialisées, scientifiques, techniques et services support (M_N)",
+        "OTQ": "Administration publique, enseignement, santé et action sociale (OTQ)",
+        "R_S": "Arts, divertissement, loisirs et autres services (R_S)",
+        "B_D_E": "Industries extractives, énergie, eau, déchets (B_D_E)",
+        "C10T12": "Fabrication d'aliments, boissons et tabac (C10T12)",
+        "C19": "Cokéfaction et raffinage (C19)",
+        "C26T28": "Fabrication de produits informatiques, électroniques et machines (C26T28)",
+        "C29_30": "Fabrication de matériels de transport (C29_30)",
+        "C_OTH": "Autres industries manufacturières (C_OTH)",
+        "F": "Construction",
+        "G": "Commerce ; réparation d'automobiles et de motocycles",
+        "_T": "Ensemble des secteurs",
+    },
+    "indicateur": {
+        "SALAIRE_NET_EQTP_MENSUEL_MOYEN_EUROS_CONSTANTS": "Salaire net moyen mensuel (Euros constants)",
+        "SALAIRE_NET_EQTP_MENSUEL_MOYEN_EVOLUTION_CONSTANT": "Évolution du salaire net mensuel (%)",
+        "SALAIRE_NET_EQTP_MENSUEL_MOYEN_INDICE_100_1996": "Indice du salaire net mensuel (Base 100 en 1996)",
+        "PARTMS_10": "Part de la masse salariale perçue par le top 10%",
+        "PARTMS_100": "Part de la masse salariale perçue par le top 1%",
+        "PARTMS_1000": "Part de la masse salariale perçue par le top 0,1%",
+        "PARTMS_10000": "Part de la masse salariale perçue par le top 0,01%",
+    },
+    "centile_salaire": {
+        "CENTILE_10": "10e centile (D1 - 10% gagnent moins)",
+        "CENTILE_25": "1er quartile (Q1 - 25% gagnent moins)",
+        "CENTILE_50": "Médiane (50% gagnent moins/plus)",
+        "CENTILE_75": "3e quartile (Q3 - 75% gagnent moins)",
+        "CENTILE_90": "90e centile (D9 - 10% gagnent plus)",
+        "CENTILE_95": "95e centile (Top 5%)",
+        "CENTILE_99": "99e centile (Top 1%)",
+        "_T": "Ensemble",
+    },
+}
