@@ -1,17 +1,55 @@
-# ProjetPython
 
-Projet Python d’analyse des salaires à partir des séries longues DERA.
+# Écarts salariaux femmes-hommes dans le secteur privé français (1996-2024)
 
-## Ordre d’exécution
+*Auteur : Yanis Yvray & Jawad MAHRAOUI (2026).*
 
-Les notebooks doivent être lancés dans cet ordre :
+> **Sujet**
+>
+> Ce projet étudie les inégalités de rémunération entre les femmes et les hommes dans le secteur privé français entre 1996 et 2024.
+>
+> **Problématique :** Comment les écarts salariaux femmes-hommes ont-ils évolué sur cette période et dans quelle mesure varient-ils selon la catégorie socioprofessionnelle et le niveau de salaire ?
 
-1. **`Nettoyage_donnees.ipynb`** — lit les fichiers CSV bruts du dossier `Data brutes/`, harmonise les noms et les catégories, puis crée les fichiers nettoyés dans `Data nettoyees/`. Les fichiers bruts ne sont pas modifiés.
-2. **`Statistiques_descriptives.ipynb`** — lit le fichier privé nettoyé et produit les tableaux et graphiques descriptifs.
-3. **`Regression_salaire_femme_CSP.ipynb`** — lit également le fichier privé nettoyé et estime les régressions sur les écarts salariaux.
+> **Données**
+>
+> Le projet repose sur des données agrégées de salaires mensuels nets, distinguées selon :
+>
+> - Le sexe ;
+> - La catégorie socioprofessionnelle (cadres, professions intermédiaires, employés et ouvriers) ;
+> - La position dans la distribution des salaires (D1, Q1, médiane, Q3, D9, P95 et P99) ;
+> - L'année (1996-2024).
 
-Exécute toutes les cellules du notebook de nettoyage avant d’ouvrir les deux notebooks d’analyse. Si `Data nettoyees/` ou le fichier privé nettoyé est absent, relance d’abord le nettoyage.
+> **Modèles économétriques**
+>
+> Trois régressions linéaires sont estimées :
+>
+> 1. **Évolution temporelle :** mesure la tendance de l'écart salarial moyen entre les femmes et les hommes.
+> 2. **Analyse par CSP :** étudie les différences d'écarts salariaux selon la catégorie socioprofessionnelle, à l'aide d'interactions entre le sexe et la CSP.
+> 3. **Analyse par quantiles :** examine l'évolution de l'écart salarial selon la position dans la distribution des salaires.
 
-## Dépendances
+> **Principaux résultats**
+>
+> Les résultats montrent que :
+>
+> - L'écart salarial moyen diminue entre 1996 et 2024, passant d'un écart initial estimé à -22,82 % à un écart prédit d'environ -14,1 % en 2024.
+> - L'écart varie selon la CSP : il atteint -22,11 % chez les cadres, contre -7,37 % chez les employés.
+> - Il augmente avec le niveau de salaire : de -6,28 % au premier décile à -34,98 % au 99e centile.
+>
+> Les résultats mettent ainsi en évidence la persistance et l'hétérogénéité des inégalités salariales.
 
-Les notebooks utilisent Python et les bibliothèques `pandas`, `numpy`, `matplotlib` et `statsmodels`. Ils peuvent être ouverts dans Jupyter ou VS Code avec la prise en charge des notebooks `.ipynb`.
+> **Reproduction du projet**
+>
+> **Installation**
+>
+> ```bash
+> pip install -r requirements.txt
+> ```
+>
+> **Lancement**
+>
+> Ouvrir le notebook `Regression_salaire_femme_CSP.ipynb`, qui regroupe le traitement des données, les estimations économétriques et l'interprétation des résultats.
+
+> **Structure du repo**
+>
+> - `data` : données utilisées pour l'analyse ;
+> - `Regression_salaire_femme_CSP.ipynb` : notebook principal ;
+> - `requirements.txt` : dépendances Python nécessaires à l'exécution du projet.
