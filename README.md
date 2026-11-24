@@ -42,5 +42,4 @@ Les données utilisées étant agrégées et tous temps de travail confondus, el
 ## Ordre d'exécution
 
 1. **Nettoyage des données :** ouvrir le fichier de nettoyage des données et lancer le code en premier afin de générer le jeu de données nettoyé.
-2. **Statistiques descriptives :** ouvrir et tout excécuter 
-3. **Modélisation économétrique :** ouvrir et tout exécuter
+2. **Rapport** ouvrir et tout exécuter
